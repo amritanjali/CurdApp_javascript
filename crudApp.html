@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Facebook-log in or sign up</title>
+
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style>
+        .mr5 {
+            margin-right: 5px;
+        }
+
+        .dispaly-none {
+            display: none
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2> Table</h2>
+        <div class="">
+            <table class="table" id="records_table">
+                <thead>
+                    <tr>
+                        <th style="width: 5%">User ID</th>
+                        <!-- <th style="width: 5%" style="">ID</th> -->
+                        <th style="width: 30%">Title</th>
+                        <th style="width: 30%">Body</th>
+                        <th style="width: 30%">Action
+                            <button class="btn btn-info" id="add-entry" data-toggle="modal" data-target="#myModal2">Add Entry</button>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Modal1 -->
+        <div id="myModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Update Info</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="usr">User ID:</label>
+                            <!-- <span id="usr"></span> -->
+                            <input type="text" class="form-control" id="edit_userID" value="">
+                        </div>
+                        <div class="form-group">
+
+                            <!-- <span id="usr"></span> -->
+                            <input type="hidden" class="form-control" id="edit_id" value="">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pwd">Title:</label>
+                            <textarea class="form-control" id="edit_title" value=""></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="pwd">Status:</label>
+                            <textarea class="form-control" id="edit_body"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-warning update_data" data-dismiss="modal">Save</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- Modal2 -->
+        <div id="myModal2" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Update Info</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="usr">User ID:</label>
+                            <!-- <span id="usr"></span> -->
+                            <input type="number" class="form-control" id="add_useID" value="">
+                        </div>
+                        <div class="form-group">
+                            <label for="pwd">ID:</label>
+
+                            <input type="number" class="form-control" id="add_ID">
+                        </div>
+                        <div class="form-group">
+                            <label for="pwd">Title:</label>
+                            <textarea class="form-control" id="add_title" value=""></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="pwd">Body:</label>
+                            <textarea class="form-control" id="add_body"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-warning" id="addRow" data-dismiss="modal">Save</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        //    var item = "https://jsonplaceholder.typicode.com/todos/1"
+
+        $.ajax({
+            url: 'http://localhost:3000/posts',
+            type: 'GET',
+
+            success: function (response) {
+                var trHTML = '';
+                $.each(response, function (i, item) {
+                    // console.log(item.userId);
+                    trHTML += '<tr  id="' + item.id + '" class="table-d"><td class="table_userID">' + item.userId + '</td><td>' + item.title + '</td><td>' + item.body + '</td><td class="btn-data"><button class="btn btn-success mr5 editdata" data-toggle="modal" data-target="#myModal">Edit</button><button class="btn btn-info mr5">Details</button><button class="btn btn-danger mr5 dltdata">Delete</button></td></tr>';
+                });
+
+                $("#records_table").append(trHTML);
+            }
+        })
+
+
+
+
+        // Add Entry
+        $("#addRow").click(function (e) {
+            e.preventDefault();
+            var data = {
+                userId: $("#add_useID").val(),
+                title: $("#add_title").val(),
+                body: $("#add_body").val()
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: 'http://localhost:3000/posts',
+                crossDomain: true,
+                datatype: "application/json",
+                contentType: "application/json",
+                data: JSON.stringify(data),
+                success: function (response, status, request) {
+                    console.log(data.userId)
+                    var trHTML = ""
+                    trHTML += '<tr class="table_userID"><td >' + data.userId + '</td><td>' + data.title + '</td><td>' + data.body + '</td><td class="btn-data"><button class="btn btn-success mr5 editdata" data-toggle="modal" data-target="#myModal" data-book-id="my_id_value">Edit</button><button class="btn btn-info mr5">Details</button><button class="btn btn-danger mr5 dltdata">Delete</button></td></tr>';
+                    // console.log(trHTML)
+
+                    $("#records_table").append(trHTML);
+
+                }
+            })
+        })
+
+        // delete entry
+        $(document).on("click", ".dltdata", function () {
+            var trElement = $(this).parent().parent();
+            $.ajax({
+                url: 'http://localhost:3000/posts/' + trElement.attr("id"),
+                type: 'DELETE',
+                crossDomain: true,
+                datatype: "application/json",
+                contentType: "application/json",
+                success: function (response, status, request) {
+                    trElement.remove();
+                    alert('Record deleted successfuly');
+                }
+            })
+        })
+
+
+        // Edit details
+        $(document).on("click", ".editdata", function () {
+
+            var trElement = $(this).parent().parent()
+
+            $.ajax({
+                url: 'http://localhost:3000/posts/' + trElement.attr("id"),
+                type: 'GET',
+                datatype: "application/json",
+                contentType: "application/json",
+                // data: JSON.stringify(data),
+                success: function (response) {
+
+                    $("#edit_userID").val(response.userId)
+                    $("#edit_title").val(response.title)
+                    $("#edit_body").val(response.body)
+                    $("#edit_id").val(response.id)
+
+                }
+            })
+
+        });
+
+        // update data
+        $(document).on("click", ".update_data", function () {
+
+            var idval = $("#edit_id").val()
+            // var ter = $(this).parent().parent().parent().parent().parent().parent().children().children().children().children().hasClass("table_userID")
+            // console.log((ter))
+            // console.log($("tr#"))
+            console.log($("tr#" +idval ))
+
+            var data = {
+                userId: $("#edit_userID").val(),
+                title: $("#edit_title").val(),
+                body: $("#edit_body").val()
+            }
+            $.ajax({
+                url: 'http://localhost:3000/posts/' + idval,
+                type: 'PUT',
+                datatype: "application/json",
+                contentType: "application/json",
+                data: JSON.stringify(data),
+                success: function (response) {
+
+                     var trHTML = ""
+                    trHTML += '<td >' + data.userId + '</td><td>' + data.title + '</td><td>' + data.body + '</td><td class="btn-data"><button class="btn btn-success mr5 editdata" data-toggle="modal" data-target="#myModal" data-book-id="my_id_value">Edit</button><button class="btn btn-info mr5">Details</button><button class="btn btn-danger mr5 dltdata">Delete</button></td>';
+                  
+
+                    $("tr#" +idval ).html(trHTML);
+                    // if (response) {
+                    //     $("#records_table").show();
+                    //     $.ajax({
+                    //         url: 'http://localhost:3000/posts',
+                    //         type: 'GET',
+
+                    //         success: function (response) {
+                    //             var trHTML = '';
+                    //             $.each(response, function (i, item) {
+                                 
+                    //                 trHTML += '<tr  id="' + item.id + '" class="table-d"><td class="table_userID">' + item.userId + '</td><td>' + item.id + '</td><td>' + item.title + '</td><td>' + item.body + '</td><td class="btn-data"><button class="btn btn-success mr5 editdata" data-toggle="modal" data-target="#myModal">Edit</button><button class="btn btn-info mr5">Details</button><button class="btn btn-danger mr5 dltdata">Delete</button></td></tr>';
+                    //             });
+                    //             console.log(trHTML);
+
+                                
+                    //             location.reload();
+                    //         }
+                    //     })
+
+                    // }
+               
+                }
+            })
+        })
+
+    </script>
+    <script>
+
+    </script>
+</body>
+
+</html>
